@@ -1,0 +1,10 @@
+.project
+.classpath
+.idea/
+target
+client./
+node
+**/application-*.properties
+**/*.log
+src/main/resources/public/**
+.settings

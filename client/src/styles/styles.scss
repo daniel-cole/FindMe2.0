@@ -1,0 +1,26 @@
+@import url('http://fonts.googleapis.com/css?family=Roboto:300,400');
+@import 'login';
+@import 'pace-theme-center-radar.css';
+
+html, body {
+  position: relative;
+  height: 100%;
+  min-height: 100%;
+  font-family: Roboto;
+}
+
+/*
+Issue with Chrome and auto-fill on input causing background color to go nasty
+https://stackoverflow.com/questions/2781549/removing-input-background-colour-for-chrome-autocomplete
+ */
+@-webkit-keyframes autofill {
+  to {
+    color: #666;
+    background: transparent;
+  }
+}
+
+input:-webkit-autofill {
+  -webkit-animation-name: autofill;
+  -webkit-animation-fill-mode: both;
+}
