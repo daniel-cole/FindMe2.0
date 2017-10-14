@@ -31,9 +31,8 @@ public abstract class TestBase {
 
 	@BeforeClass
 	public static void beforeClass() throws Exception {
-		System.setProperty("spring.profiles.active", "ci");
 		server = new ServerStart();
-		server.start(new String[] { "--server.port=8080" }, false);
+		server.start(new String[] { "--server.port=8090" }, false);
 		System.setProperty("findme.server.port", server.getPort() + "");
 		createTestData();
 	}

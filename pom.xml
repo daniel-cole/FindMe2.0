@@ -158,7 +158,11 @@
                             <filesets>
                                 <fileset>
                                     <directory>${basedir}/src/main/resources/public/</directory>
-                                    <includes>**/**</includes>
+                                    <includes>*</includes>
+                                </fileset>
+                                <fileset>
+                                    <directory>${basedir}/build/</directory>
+                                    <includes>*</includes>
                                 </fileset>
                             </filesets>
                         </configuration>
