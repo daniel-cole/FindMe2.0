@@ -44,7 +44,7 @@ pipeline {
 
                 script {
                     imageId = sh(
-                        script: "docker build -q --build-arg JAR_FILE=${jarFile} . -t thekingwizard/findme:lts",
+                        script: "docker build -q --build-arg FINDME_JAR=${jarFile} . -t thekingwizard/findme:lts",
                         returnStdout: true
                     ).trim()
                 }
