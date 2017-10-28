@@ -1,37 +1,69 @@
 pipeline {
 
-  agent any
-
-  environment {
-    SPRING_DATASOURCE_URL               = "jdbc:h2:file:./test"
-    SERVER_PORT                         = "9080"
-    SPRING_DATASOURCE_PASSWORD          = credentials('findme-db-password')
-    JWT_SECRET                          = credentials('findme-jwt-secret')
-    AWS_ACCESSKEY                       = credentials('findme-aws-access-key')
-    AWS_SECRETKEY                       = credentials('findme-aws-secret-access-key')
-    AWS_BUCKETNAME                      = credentials('findme-aws-bucket-name')
-    PG_ADMIN_PASS                       = credentials('findme-pg-admin-pass')
-    PG_APP_PASS                         = credentials('findme-pg-app-pass')
-    npm_config_cache		            = "npm-cache" // required to prevent issues with file permissions in container
-  }
-
-  tools {
-    jdk 'jdk8'
-    maven 'M3'
-   }
-
-  stages {
-
-    stage('Clone Repo') {
-      steps {
-        git 'https://github.com/daniel-cole/FindMe2.0'
-      }
+    environment {
+        SPRING_DATASOURCE_URL = "jdbc:h2:file:./build/test"
+        SPRING_DATASOURCE_USERNAME = "sa"
+        SPRING_DATASOURCE_PASSWORD = ""
+        JWT_SECRET = credentials('findme-jwt-secret')
+        AWS_ACCESSKEY = credentials('findme-aws-access-key')
+        AWS_SECRETKEY = credentials('findme-aws-secret-access-key')
+        AWS_BUCKETNAME = credentials('findme-aws-bucket-name')
+        npm_config_cache = "npm-cache" // required to prevent issues with file permissions in container
     }
 
-    stage('Build') {
-      steps {
-        sh 'mvn clean package'
-      }
+    agent any
+
+    tools {
+        jdk 'jdk8'
+        maven 'M3'
     }
-  }
+
+    stages {
+
+        stage('Clone FindMe Repo') {
+            steps {
+                git 'https://github.com/daniel-cole/FindMe2.0'
+            }
+        }
+
+        stage('Build FindMe War') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+
+
+        stage('Build FindMe Image') {
+            steps {
+                script {
+                    warFile = sh(
+                        script: 'echo target/$(ls target/ | egrep "findme.*\\.war$")',
+                        returnStdout: true
+                    ).trim()
+                }
+
+                script {
+                    imageId = sh(
+                        script: "docker build -q --build-arg DOCKER_WAR_FILE=${warFile} . -t thekingwizard/findme:lts",
+                        returnStdout: true
+                    ).trim()
+                }
+            }
+        }
+
+        stage('Push FindMe Image') {
+            steps {
+                withDockerRegistry([credentialsId: 'docker-hub-credentials', url: 'https://index.docker.io/v1/']) {
+                    sh 'docker push thekingwizard/findme:lts'
+                    sh "docker rmi ${imageId}"
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            archive "target/*.war"
+        }
+    }
 }
