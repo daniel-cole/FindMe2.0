@@ -36,15 +36,15 @@ pipeline {
         stage('Build FindMe Image') {
             steps {
                 script {
-                    warFile = sh(
-                        script: 'echo target/$(ls target/ | egrep "findme.*\\.war$")',
+                    jarFile = sh(
+                        script: 'echo target/$(ls target/ | egrep "findme.*\\.jar$")',
                         returnStdout: true
                     ).trim()
                 }
 
                 script {
                     imageId = sh(
-                        script: "docker build -q --build-arg DOCKER_WAR_FILE=${warFile} . -t thekingwizard/findme:lts",
+                        script: "docker build -q --build-arg JAR_FILE=${jarFile} . -t thekingwizard/findme:lts",
                         returnStdout: true
                     ).trim()
                 }
@@ -63,7 +63,7 @@ pipeline {
 
     post {
         success {
-            archive "target/*.war"
+            archive "target/*.jar"
         }
     }
 }
