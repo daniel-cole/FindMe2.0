@@ -139,13 +139,6 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>3.1.0</version>
-                <configuration>
-                    <packagingExcludes>WEB-INF/classes/*.properties</packagingExcludes>
-                </configuration>
-            </plugin>
-            <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
                 <executions>
                     <execution>
