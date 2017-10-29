@@ -18,7 +18,7 @@ let apiEndpoint = 'http://localhost:8080/api';
 
 /* eslint-disable no-process-env */
 if (process.env.NODE_ENV == 'production') {
-  apiEndpoint = 'http://findmeapp:8080/api';
+  apiEndpoint = 'https://www.thekingwizard.com/api';
 }
 
 const loggerMiddleware = createLogger();
